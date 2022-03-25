@@ -7,6 +7,6 @@ My main aim is to have an easy to extend and open source front-end to be used, f
 
 At the moment the work is unfinished and there are still unimplemented features. Expect also errors and Python "traceback(s)".
 
-I have also included some examples to test the programs. To my knowledge, files in the examples directory, are freely distributable. Should it not be the case, please contact me.
+I have also included some examples to test the program. To my knowledge files in the examples directory are freely distributable. Should it not be the case, please contact me.
 
 Suggestions and comments are welcome.
