@@ -1,0 +1,50 @@
+CM 31 el. yagi by W1JR
+CM Free Space
+CM 423.00 MHz
+CM 31 wires, meters
+CE
+SY wire_radius =2.5mm
+SY n_seg=9
+SY first_dir_position = 176mm
+GW 1,  n_seg, 0.000, -0.176, 0.000, 0.000, 0.176, 0.000, wire_radius
+GW 2,  n_seg, 0.127, -0.172, 0.000, 0.127, 0.172, 0.000, wire_radius
+GW 3,  n_seg, first_dir_position, -0.163, 0.000, first_dir_position, 0.163, 0.000, wire_radius
+GW 4,  n_seg, 0.300, -0.157, 0.000, 0.300, 0.157, 0.000, wire_radius
+GW 5,  n_seg, 0.450, -0.154, 0.000, 0.450, 0.154, 0.000, wire_radius
+GW 6,  n_seg, 0.625, -0.153, 0.000, 0.625, 0.153, 0.000, wire_radius
+GW 7,  n_seg, 0.820, -0.151, 0.000, 0.820, 0.151, 0.000, wire_radius
+GW 8,  n_seg, 1.031, -0.148, 0.000, 1.031, 0.148, 0.000, wire_radius
+GW 9,  n_seg, 1.251, -0.147, 0.000, 1.251, 0.147, 0.000, wire_radius
+GW 10, n_seg, 1.480, -0.146, 0.000, 1.480, 0.146, 0.000, wire_radius
+GW 11, n_seg, 1.720, -0.145, 0.000, 1.720, 0.145, 0.000, wire_radius
+GW 12, n_seg, 1.970, -0.143, 0.000, 1.970, 0.143, 0.000, wire_radius
+GW 13, n_seg, 2.230, -0.143, 0.000, 2.230, 0.143, 0.000, wire_radius
+GW 14, n_seg, 2.496, -0.143, 0.000, 2.496, 0.143, 0.000, wire_radius
+GW 15, n_seg, 2.765, -0.142, 0.000, 2.765, 0.142, 0.000, wire_radius
+GW 16, n_seg, 3.040, -0.141, 0.000, 3.040, 0.141, 0.000, wire_radius
+GW 17, n_seg, 3.320, -0.141, 0.000, 3.320, 0.141, 0.000, wire_radius
+GW 18, n_seg, 3.600, -0.140, 0.000, 3.600, 0.140, 0.000, wire_radius
+GW 19, n_seg, 3.879, -0.140, 0.000, 3.879, 0.140, 0.000, wire_radius
+GW 20, n_seg, 4.159, -0.140, 0.000, 4.159, 0.140, 0.000, wire_radius
+GW 21, n_seg, 4.439, -0.139, 0.000, 4.439, 0.139, 0.000, wire_radius
+GW 22, n_seg, 4.718, -0.137, 0.000, 4.718, 0.137, 0.000, wire_radius
+GW 23, n_seg, 4.998, -0.135, 0.000, 4.998, 0.135, 0.000, wire_radius
+GW 24, n_seg, 5.278, -0.135, 0.000, 5.278, 0.135, 0.000, wire_radius
+GW 25, n_seg, 5.557, -0.135, 0.000, 5.557, 0.135, 0.000, wire_radius
+GW 26, n_seg, 5.837, -0.134, 0.000, 5.837, 0.134, 0.000, wire_radius
+GW 27, n_seg, 6.117, -0.134, 0.000, 6.117, 0.134, 0.000, wire_radius
+GW 28, n_seg, 6.396, -0.134, 0.000, 6.396, 0.134, 0.000, wire_radius
+GW 29, n_seg, 6.676, -0.132, 0.000, 6.676, 0.132, 0.000, wire_radius
+GW 30, n_seg, 6.956, -0.132, 0.000, 6.956, 0.132, 0.000, wire_radius
+GW 31, n_seg, 7.235, -0.132, 0.000, 7.235, 0.132, 0.000, wire_radius
+GE 0
+SY start_f = 432.0
+SY f_step = 0.5
+SY nr_freq=5
+FR 0,nr_freq,0,0, start_f,f_step 
+EX 0,2,5,00,1.,0.
+RP 0,1,181,1000,90.,0.,1.,1.
+XQ 0
+RP 0,181,1,1000,90.,0.,1.,1.
+XQ 0
+EN
