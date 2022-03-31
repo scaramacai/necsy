@@ -67,7 +67,10 @@ def process_command_line(a):
             ret_string += a[start:first]
         start = last
         partial = process_units(a[first:last])
-        part = str(eval(partial))
+        if re.search('^0[0-1]',partial.strip()):
+            part = partial
+        else:
+            part = str(eval(partial))
         ret_string += part
     ret_string += a[start:string_len]
 #   print('Values: ',ret_string)
@@ -75,12 +78,14 @@ def process_command_line(a):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input_file', type=argparse.FileType('rt'), required=True, help='input file')
-parser.add_argument('-j', '--processors', type=int, required=False, help='number of processors in SMP machine')
+# parser.add_argument('-j', '--processors', type=int, required=False, help='number of processors in SMP machine')
+parser.add_argument('-v','--version', action='version', version='%(prog)s 0.1.0')
 parser.add_argument('-o', '--output_file', type=argparse.FileType('w'), required=False, help='output file (defalts to stdout)')
 args = parser.parse_args()
 print('Processing file: ',args.input_file.name, file=sys.stderr)
 stdout_fileno = sys.stdout
 remember_to_close = False
+symbol_list=[]
 if args.output_file is not None:
     args.output_file.close()
     sys.stdout = open(args.output_file.name, 'w')
@@ -98,17 +103,19 @@ with args.input_file:
                 l1 = l.strip().upper().replace('^','**')
                 str_out = process_units(l1)
                 exec(str_out)
+                symbol = l1.split('=')[0].strip()
+                symbol_list.append(tuple((symbol,str_out)))
         elif apex_comment_pattern.search(line):
             pass
         elif comment_pattern.search(line):
             print(line, end='')
-        elif gx_pattern.search(line):
-            print('Warning: GX card found! It will be copied verbatim.', file=sys.stderr)
-            gx_list = line.upper().split("'") # remove apex comments anyway
-            if len(gx_list) == 1:
-                print(gx_list[0], end='')
-            else:
-                print(gx_list[0])
+#        elif gx_pattern.search(line):
+#            print('Warning: GX card found! It will be copied verbatim.', file=sys.stderr)
+#            gx_list = line.upper().split("'") # remove apex comments anyway
+#            if len(gx_list) == 1:
+#                print(gx_list[0], end='')
+#            else:
+#                print(gx_list[0])
         else:
             if len(line) <= 3:
                 print(line, end='')
@@ -126,4 +133,8 @@ with args.input_file:
 if remember_to_close:
     sys.stdout.close()
     sys.stdout = stdout_fileno
+print('------- Symbol list ---------', file=sys.stderr)
+for t in symbol_list:
+    sy, s_out = t
+    print('SY ', sy, '=',s_out.split('=')[1].strip(), '=', eval(sy), file =sys.stderr)
 print('End of processing', file=sys.stderr)
