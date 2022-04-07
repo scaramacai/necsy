@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import argparse
 import re
@@ -93,14 +95,13 @@ if args.output_file is not None:
 with args.input_file: 
     sy_pattern = re.compile('^SY\s+',flags=re.IGNORECASE)
     comment_pattern = re.compile('^C[EM]\s+',flags=re.IGNORECASE)
-    gx_pattern = re.compile('^GX\s+', flags=re.IGNORECASE)
     apex_comment_pattern = re.compile("^'")
     for line in args.input_file:
         if sy_pattern.search(line):
             myline = sy_pattern.sub('', line)
             lines_without_comments = (myline.split("'")[0]).split(",")
             for l in lines_without_comments:
-                l1 = l.strip().upper().replace('^','**')
+                l1 = l.strip().upper().replace('^','**').expandtabs().replace(' MOD ', ' % ')
                 str_out = process_units(l1)
                 exec(str_out)
                 symbol = l1.split('=')[0].strip()
@@ -109,20 +110,13 @@ with args.input_file:
             pass
         elif comment_pattern.search(line):
             print(line, end='')
-#        elif gx_pattern.search(line):
-#            print('Warning: GX card found! It will be copied verbatim.', file=sys.stderr)
-#            gx_list = line.upper().split("'") # remove apex comments anyway
-#            if len(gx_list) == 1:
-#                print(gx_list[0], end='')
-#            else:
-#                print(gx_list[0])
         else:
             if len(line) <= 3:
                 print(line, end='')
             else:
                 print(line[0:3], end = '')
                 command_list = line[3:len(line)].upper().split("'")
-                l1 = process_command_line(command_list[0].replace('^','**').replace(',',' '))
+                l1 = process_command_line(command_list[0].replace('^','**').expandtabs().replace(' MOD ', ' % ').replace(',',' '))
                 if len(command_list) == 1:
                     print(l1, end='')
                 else:
