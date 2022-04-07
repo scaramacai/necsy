@@ -4,5 +4,10 @@ There is no installer, since there is no need to install. The only requirement i
 
 You need Python 3 to run the script.
 
-Run:
-`python3 necsy.py -i <input_file>` or `python3 necsy.py -h` for help 
+Make __necsy.py__ executable and run:
+
+
+`necsy.py -i <input_file>` or `necsy.py -h` for help
+
+If this does not work try:
+`python3 necsy.py -i <input_file>` or `python3 necsy.py -h` for help
