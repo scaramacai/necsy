@@ -101,7 +101,7 @@ with args.input_file:
             myline = sy_pattern.sub('', line)
             lines_without_comments = (myline.split("'")[0]).split(",")
             for l in lines_without_comments:
-                l1 = l.strip().upper().replace('^','**').expandtabs().replace(' MOD ', ' % ')
+                l1 = l.strip().upper().replace('^','**').expandtabs().replace(' MOD ', ' % ').replace('#','AWG_')
                 str_out = process_units(l1)
                 exec(str_out)
                 symbol = l1.split('=')[0].strip()
@@ -114,13 +114,18 @@ with args.input_file:
             if len(line) <= 3:
                 print(line, end='')
             else:
-                print(line[0:3], end = '')
-                command_list = line[3:len(line)].upper().split("'")
-                l1 = process_command_line(command_list[0].replace('^','**').expandtabs().replace(' MOD ', ' % ').replace(',',' '))
-                if len(command_list) == 1:
-                    print(l1, end='')
+                if 'EX' in line[0:2].upper() and '%' in line:
+                    print('Warning: EX line contains the 4nec2 percent extension. This is not supported at the moment!', file=sys.stderr)
+                    print('EX line will be copied verbatim!!', file=sys.stderr)
+                    print(line)
                 else:
-                    print(l1)
+                    print(line[0:3], end = '')
+                    command_list = line[3:len(line)].upper().split("'")
+                    l1 = process_command_line(command_list[0].replace('^','**').expandtabs().replace(' MOD ', ' % ').replace('#','AWG_').replace(',',' '))
+                    if len(command_list) == 1:
+                        print(l1, end='')
+                    else:
+                        print(l1)
 
 #           print(line)
 # Close stdout file
