@@ -5,7 +5,8 @@ import argparse
 import re
 from math_4nec2 import *
 
-unit_names = ['CM', 'MM', 'IN', 'FT', 'PF', 'NF', 'UF', 'NH', 'UH']
+unit_names = ["CM", "MM", "IN", "FT", "PF", "NF", "UF", "NH", "UH"]
+
 
 def process_units(a):
     t_list = []
@@ -13,43 +14,48 @@ def process_units(a):
     for index, u in enumerate(unit_names):
         last = 0
         nmatches = 0
-        pattern = re.compile(r'(=\s*|\s+|(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?)'+u+'(?!\w)|([+\-*/]|\s+|$)*?')
+        pattern = re.compile(
+            r"(=\s*|\s+|(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?)"
+            + u
+            + "(?!\w)|([+\-*/]|\s+|$)*?"
+        )
         while last <= len(a):
-#            result = re.search(r'(=\s*|\s+|(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?)'+u+r'(?!\w)|([+\-*/]|\s+|$)*?',a, last)
+            #            result = re.search(r'(=\s*|\s+|(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?)'+u+r'(?!\w)|([+\-*/]|\s+|$)*?',a, last)
             result = pattern.search(a, last)
             if result is None:
                 break
             first, last = result.span()
             if last == first:
-                last = first+1
+                last = first + 1
             else:
-                t_list.append(tuple((first,last,index)))
-                nmatches=nmatches+1
-#       print(u, end=' ')
-#       print(a, end=' ')
-#       print(nmatches)
-#   print(t_list)
+                t_list.append(tuple((first, last, index)))
+                nmatches = nmatches + 1
+    #       print(u, end=' ')
+    #       print(a, end=' ')
+    #       print(nmatches)
+    #   print(t_list)
     t_list.sort()
-#   print(t_list)
-    ret_string = ''
+    #   print(t_list)
+    ret_string = ""
     start = 0
     for t in t_list:
         first, last, index = t
         if start < first:
             ret_string += a[start:first]
         start = last
-        if a[first] == '=':
+        if a[first] == "=":
             part = a[first:last]
         else:
-            part = '(' + a[first:last -2] + '*'+ unit_names[index]+ ')'
+            part = "(" + a[first : last - 2] + "*" + unit_names[index] + ")"
         ret_string += part
     ret_string += a[start:string_len]
     return ret_string
 
+
 def process_command_line(a):
     t_list = []
     string_len = len(a)
-    pattern = re.compile(r'\S+')
+    pattern = re.compile(r"\S+")
     last = 0
     while last <= len(a):
         result = pattern.search(a, last)
@@ -57,11 +63,11 @@ def process_command_line(a):
             break
         first, last = result.span()
         if last == first:
-            last = first+1
+            last = first + 1
         else:
-            t_list.append(tuple((first,last)))
+            t_list.append(tuple((first, last)))
     t_list.sort()
-    ret_string = ''
+    ret_string = ""
     start = 0
     for t in t_list:
         first, last = t
@@ -69,71 +75,96 @@ def process_command_line(a):
             ret_string += a[start:first]
         start = last
         partial = process_units(a[first:last])
-        if re.search('^0[0-1]',partial.strip()):
+        if re.search("^0[0-9]*", partial.strip()):
             part = partial
         else:
             part = str(eval(partial))
         ret_string += part
     ret_string += a[start:string_len]
-#   print('Values: ',ret_string)
+    #   print('Values: ',ret_string)
     return ret_string
 
+
 parser = argparse.ArgumentParser()
-parser.add_argument('-i', '--input_file', type=argparse.FileType('rt'), required=True, help='input file')
-# parser.add_argument('-j', '--processors', type=int, required=False, help='number of processors in SMP machine')
-parser.add_argument('-v','--version', action='version', version='%(prog)s 0.1.0')
-parser.add_argument('-o', '--output_file', type=argparse.FileType('w'), required=False, help='output file (defalts to stdout)')
+parser.add_argument(
+    "-i", "--input_file", type=argparse.FileType("rb"), required=True, help="input file"
+)
+parser.add_argument("-v", "--version", action="version", version="%(prog)s 0.1.0")
+parser.add_argument(
+    "-o",
+    "--output_file",
+    type=argparse.FileType("w"),
+    required=False,
+    help="output file (defaults to stdout)",
+)
 args = parser.parse_args()
-print('Processing file: ',args.input_file.name, file=sys.stderr)
+print("Processing file: ", args.input_file.name, file=sys.stderr)
 stdout_fileno = sys.stdout
 remember_to_close = False
-symbol_list=[]
+symbol_list = []
 if args.output_file is not None:
     args.output_file.close()
-    sys.stdout = open(args.output_file.name, 'w')
+    sys.stdout = open(args.output_file.name, "w")
     remember_to_close = True
-with args.input_file: 
-    sy_pattern = re.compile('^SY\s+',flags=re.IGNORECASE)
-    comment_pattern = re.compile('^C[EM]\s+',flags=re.IGNORECASE)
+with args.input_file:
+    sy_pattern = re.compile("^SY\s+", flags=re.IGNORECASE)
+    ignore_pattern = re.compile("^C[EM]|^GF|^WG", flags=re.IGNORECASE)
     apex_comment_pattern = re.compile("^'")
-    for line in args.input_file:
+    for by_l in args.input_file:
+        line = by_l.decode(encoding='utf-8', errors='ignore')
         if sy_pattern.search(line):
-            myline = sy_pattern.sub('', line)
+            myline = sy_pattern.sub("", line)
             lines_without_comments = (myline.split("'")[0]).split(",")
             for l in lines_without_comments:
-                l1 = l.strip().upper().replace('^','**').expandtabs().replace(' MOD ', ' % ').replace('#','AWG_')
+                l1 = (
+                    l.strip()
+                    .upper()
+                    .replace("^", "**")
+                    .expandtabs()
+                    .replace(" MOD ", " % ")
+                    .replace("#", "AWG_")
+                )
                 str_out = process_units(l1)
                 exec(str_out)
-                symbol = l1.split('=')[0].strip()
-                symbol_list.append(tuple((symbol,str_out)))
+                symbol = l1.split("=")[0].strip()
+                symbol_list.append(tuple((symbol, str_out)))
         elif apex_comment_pattern.search(line):
             pass
-        elif comment_pattern.search(line):
-            print(line, end='')
+        elif ignore_pattern.search(line):
+            print(line, end="")
         else:
             if len(line) <= 3:
-                print(line, end='')
+                print(line, end="")
             else:
-                if 'EX' in line[0:2].upper() and '%' in line:
-                    print('Warning: EX line contains the 4nec2 percent extension. This is not supported at the moment!', file=sys.stderr)
-                    print('EX line will be copied verbatim!!', file=sys.stderr)
+                if "EX" in line[0:2].upper() and "%" in line:
+                    print(
+                        "Warning: EX line contains the 4nec2 percent extension. This is not supported yet!",
+                        file=sys.stderr,
+                    )
+                    print("EX line will be copied verbatim!!", file=sys.stderr)
                     print(line)
                 else:
-                    print(line[0:3], end = '')
-                    command_list = line[3:len(line)].upper().split("'")
-                    l1 = process_command_line(command_list[0].replace('^','**').expandtabs().replace(' MOD ', ' % ').replace('#','AWG_').replace(',',' '))
+                    print(line[0:3], end="")
+                    command_list = line[3 : len(line)].upper().split("'")
+                    l1 = process_command_line(
+                        command_list[0]
+                        .replace("^", "**")
+                        .expandtabs()
+                        .replace(" MOD ", " % ")
+                        .replace("#", "AWG_")
+                        .replace(",", " ")
+                    )
                     if len(command_list) == 1:
-                        print(l1, end='')
+                        print(l1, end="")
                     else:
                         print(l1)
 
-#           print(line)
 # Close stdout file
 if remember_to_close:
     sys.stdout.close()
     sys.stdout = stdout_fileno
-print('------- Symbol list ---------', file=sys.stderr)
+print("------- Symbol list ---------", file=sys.stderr)
 for t in symbol_list:
     sy, s_out = t
-    print('SY ', sy, '=',s_out.split('=')[1].strip(), '=', eval(sy), file =sys.stderr)
-print('End of processing', file=sys.stderr)
+    print("SY ", sy, "=", s_out.split("=")[1].strip(), "=", eval(sy), file=sys.stderr)
+print("End of processing", file=sys.stderr)
